@@ -7,27 +7,16 @@ export class Sound {
         this.#description = description;
         this.#soundData = soundData;
     }
-    play() {
-        const audio = this.base64toAudio(this.soundData);
-        audio.play();
+    getName() {
+        return this.#name;
     }
-    base64toAudio(base64) {
-        let audio = new Audio();
-        audio.src = base64;
-        return audio;
+    getDescription() {
+        return this.#description;
     }
-    audioToBase64(audio) {
-        return new Promise((resolve, reject) => {
-            let reader = new FileReader();
-            reader.readAsDataURL(audio);
-            reader.onload = function () {
-                resolve(reader.result);
-            };
-            reader.onerror = function (error) {
-                reject(error);
-            };
-        });
+    getSoundData() {
+        return this.#soundData;
     }
+
 
 
 }
