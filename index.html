@@ -1,27 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link rel="stylesheet" href="css/style.css">
-        <script src="js/app.js" type="module"></script>
-        <script src="https://kit.fontawesome.com/7060ae4657.js" crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <main>
-            <h1>DnD SoundBoard</h1>
-            <div class="sound-wrapper drop-zone file-drop-zone">
-                <h2>Soundboard</h2>
-                <span class="soundboard-info">Drag and drop sounds here</span>
-                <div id="sound-container" >
-                </div>
+
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js" type="module"></script>
+    <script src="https://kit.fontawesome.com/7060ae4657.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <main>
+        <h1>DnD SoundBoard</h1>
+        <div class="sound-wrapper drop-zone file-drop-zone">
+            <h2>Soundboard</h2>
+            <span class="soundboard-info">Drag and drop sounds here</span>
+            <div id="sound-container">
             </div>
-        </main>
-    </body>
-    <script>
-        async function deleteElement(element) {
-            const result = await confirm("You are about to delete this sound. Are you sure?");
-            if(result) {
-                element.remove();
-            }
+        </div>
+        <button onclick="saveSounds()">Save</button>
+    </main>
+</body>
+<script>
+    async function deleteElement(element) {
+        const result = await confirm("You are about to delete this sound. Are you sure?");
+        if (result) {
+            element.remove();
         }
-    </script>
+    }
+    function saveSounds() {
+        //Download the soundContainer as a json file
+        const soundContainer = document.getElementById("sound-container");
+        const sounds = soundContainer.children;
+        const soundData = [];
+        for (let i = 0; i < sounds.length; i++) {
+            const sound = sounds[i];
+            const soundName = sound.querySelector("h2").innerText;
+            const soundSrc = sound.querySelector("audio").src;
+            const soundVolume = sound.querySelector("audio").volume;
+            soundData.push({
+                name: soundName,
+                src: soundSrc,
+                volume: soundVolume
+            });
+        }
+        console.log(soundData);
+        const data = JSON.stringify(soundData);
+        const blob = new Blob([data], { type: 'application/json' });
+        console.log(blob);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'soundboard.json';
+        link.textContent = 'Download JSON';
+
+        document.body.appendChild(link);
+
+        // Programmatically trigger the click event on the link
+        link.click();
+
+        // Clean up the object URL after the download link is clicked
+        URL.revokeObjectURL(url);
+
+        // Remove the element from the DOM
+        link.remove();
+
+    }
+</script>
+
 </html>
