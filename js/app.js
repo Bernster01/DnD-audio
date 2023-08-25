@@ -26,6 +26,9 @@ function starterFunction() {
     });
     //No drag
     fixNoDrag()
+    //Load and Save
+    document.getElementById("load-button").addEventListener("click", loadSounds);
+    document.getElementById("save-button").addEventListener("click", saveSounds);
 }
 function handleDragStart(event) {
     setTimeout(() => {
@@ -101,10 +104,8 @@ async function handleFiles(files) {
     }
     //Turn file into base64
     let audio = await audioToBase64(files[0]);
-    console.log(audio);
     //Create sound object
-    const sound = new Sound(files[0].name, files[0].name, audio);
-    console.log(sound);
+    const sound = new Sound(files[0].name, files[0].name, {data:audio});
     //Create html element
     createSoundHtmlElement(sound);
 
@@ -150,4 +151,68 @@ function fixNoDrag(){
         element.setAttribute("draggable", "true");
     });
 }
+function loadSounds() {
+    //Load the json file and add the sounds to the soundContainer
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".json";
+    fileInput.onchange = function () {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function () {
+            const data = JSON.parse(reader.result);
+            const soundContainer = document.getElementById("sound-container");
+            for (let i = 0; i < data.length; i++) {
+                const soundData = data[i];
+                console.log(soundData);
+                //Create sound object
+                const sound = new Sound(soundData.name, soundData.desc || "", {data:soundData.src,volume:soundData.volume}, );
+                //Create html element
+                createSoundHtmlElement(sound);
+            }
+        }
+        reader.readAsText(file);
+    }
+    fileInput.click();
+
+}
+function saveSounds() {
+    //Download the soundContainer as a json file
+    const soundContainer = document.getElementById("sound-container");
+    const sounds = soundContainer.children;
+    const soundData = [];
+    for (let i = 0; i < sounds.length; i++) {
+        const sound = sounds[i];
+        const soundName = sound.querySelector("h2").innerText;
+        const soundSrc = sound.querySelector("audio").src;
+        const soundVolume = sound.querySelector("audio").volume;
+        soundData.push({
+            name: soundName,
+            src: soundSrc,
+            volume: soundVolume
+        });
+    }
+    console.log(soundData);
+    const data = JSON.stringify(soundData);
+    const blob = new Blob([data], { type: 'application/json' });
+    console.log(blob);
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'soundboard.json';
+    link.textContent = 'Download JSON';
+
+    document.body.appendChild(link);
+
+    // Programmatically trigger the click event on the link
+    link.click();
+
+    // Clean up the object URL after the download link is clicked
+    URL.revokeObjectURL(url);
+
+    // Remove the element from the DOM
+    link.remove();
+
+}
+
 document.addEventListener("DOMContentLoaded", starterFunction);

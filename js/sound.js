@@ -5,7 +5,11 @@ export class Sound {
     constructor(name, description, soundData) {
         this.#name = name;
         this.#description = description;
-        this.#soundData = {data:soundData,volume:0.5};
+        //Check if soundData contains volume
+        if (soundData.volume == undefined) {
+            soundData.volume = 0.5;
+        }
+        this.#soundData = {data:soundData.data,volume:soundData.volume};
     }
     getName() {
         return this.#name;
