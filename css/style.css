@@ -9,6 +9,9 @@ html{
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+main h1{
+    text-align: center;
+}
 #sound-container{
     display: flex;
     flex-direction: row;
@@ -21,6 +24,7 @@ html{
 .sound-wrapper{
     background-color: #2c2c2c;
     padding: 1rem;
+    padding-bottom: 15rem;
     border-radius: 1rem;
     display: flex;
     flex-direction: column;
