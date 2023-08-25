@@ -1,6 +1,7 @@
 import { Sound } from "./sound.js";
 const soundTemplateHtml = ``;
 let dragSrcEl = null;
+let dragSrcAudioVolume = null;
 //DataTransfer not working 
 let dataTransfer = null;
 
@@ -24,13 +25,7 @@ function starterFunction() {
         handleFiles(files);
     });
     //No drag
-    document.querySelectorAll(".no-drag").forEach(element => {
-        element.addEventListener("dragstart", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-        });
-        element.setAttribute("draggable", "true");
-    });
+    fixNoDrag()
 }
 function handleDragStart(event) {
     setTimeout(() => {
@@ -40,6 +35,7 @@ function handleDragStart(event) {
         event.preventDefault();
         console.log(event.target.innerHTML);
         dragSrcEl = event.target;
+        dragSrcAudioVolume = event.target.querySelector("audio").volume;
         event.target.style.opacity = 0.5;
         dataTransfer = event.target.innerHTML;
 
@@ -79,10 +75,12 @@ function handleDrop(event) {
         if (dragSrcEl != event.target) {
             dragSrcEl.innerHTML = event.target.innerHTML;
             event.target.innerHTML = dataTransfer;
+            event.target.querySelector("audio").volume = dragSrcAudioVolume;
         }
         document.querySelectorAll(".drop-target-animate").forEach(element => {
             element.classList.remove("drop-target-animate");
         });
+        fixNoDrag();
     }
 }
 
@@ -125,7 +123,9 @@ function createSoundHtmlElement(sound) {
     soundElement.innerHTML = soundTemplateHtml;
     soundElement.querySelector("h2").innerHTML = sound.getName();
     soundElement.querySelector("p").innerHTML = sound.getDescription();
-    soundElement.querySelector("audio").src = sound.getSoundData();
+    let audio =soundElement.querySelector("audio");
+    audio.src = sound.getSoundData();
+    audio.volume = sound.getSoundVolume();
     document.getElementById("sound-container").appendChild(soundElement);
     addEventListenerToSoundElement(soundElement);
 }
@@ -136,6 +136,10 @@ function addEventListenerToSoundElement(element) {
     element.addEventListener("dragleave", handleDragLeave);
     element.addEventListener("dragover", handleDragOver);
     element.addEventListener("drop", handleDrop);
+    fixNoDrag()
+    
+}
+function fixNoDrag(){
     document.querySelectorAll(".no-drag").forEach(element => {
         element.addEventListener("dragstart", (event) => {
             event.preventDefault();
@@ -143,6 +147,5 @@ function addEventListenerToSoundElement(element) {
         });
         element.setAttribute("draggable", "true");
     });
-    
 }
 document.addEventListener("DOMContentLoaded", starterFunction);
