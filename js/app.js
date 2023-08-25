@@ -202,8 +202,10 @@ function saveSounds() {
         const soundName = sound.querySelector("h2").innerText;
         const soundSrc = sound.querySelector("audio").src;
         const soundVolume = sound.querySelector("audio").volume;
+        const soundDesc = sound.querySelector("p").innerText;
         soundData.push({
             name: soundName,
+            desc: soundDesc,
             src: soundSrc,
             volume: soundVolume
         });
