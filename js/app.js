@@ -111,12 +111,14 @@ async function handleFiles(files) {
 }
 function createSoundHtmlElement(sound) {
     console.log("2 ", sound);
-    const soundTemplateHtml = `
-<h2 class="no-drag">Name</h2>
-<p class="no-drag"></p>
-<audio class="no-drag" controls>
-    <source src="" type="audio/mpeg">
-</audio>`;
+    const soundTemplateHtml = ` <h2 class="no-drag">Music - Chase</h2>
+    <p class="no-drag"></p>
+    <audio class="no-drag" controls>
+        <source src="" type="audio/mpeg">
+    </audio>
+    <div class="delete-sound" onclick="deleteElement(this.parentNode)">
+        <i class="fa-solid fa-trash"></i>
+    </div>`;
     let soundElement = document.createElement("div");
     soundElement.classList.add("sound");
     soundElement.setAttribute("draggable", "true");

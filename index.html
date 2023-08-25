@@ -8,15 +8,19 @@
     <body>
         <main>
             <h1>DnD SoundBoard</h1>
-            <div id="sound-container" class="drop-zone file-drop-zone">
-                <div class="sound" id="sound-1"  draggable="true">
-                    <h2 class="no-drag">Music - Chase</h2>
-                    <p class="no-drag"></p>
-                    <audio class="no-drag" controls>
-                        <source src="" type="audio/mpeg">
-                    </audio>
-                    <div class="delete-sound" onclick="deleteElement(this.parentNode)">
-                        <i class="fa-solid fa-trash"></i>
+            <div class="sound-wrapper drop-zone file-drop-zone">
+                <h2>Soundboard</h2>
+                <span class="soundboard-info">Drag and drop sounds here</span>
+                <div id="sound-container" >
+                    <div class="sound" id="sound-1"  draggable="true">
+                        <h2 class="no-drag">Music - Chase</h2>
+                        <p class="no-drag"></p>
+                        <audio class="no-drag" controls>
+                            <source src="" type="audio/mpeg">
+                        </audio>
+                        <div class="delete-sound" onclick="deleteElement(this.parentNode)">
+                            <i class="fa-solid fa-trash"></i>
+                        </div>
                     </div>
                 </div>
             </div>
