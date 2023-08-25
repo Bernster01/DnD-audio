@@ -5,7 +5,7 @@ export class Sound {
     constructor(name, description, soundData) {
         this.#name = name;
         this.#description = description;
-        this.#soundData = soundData;
+        this.#soundData = {data:soundData,volume:0.5};
     }
     getName() {
         return this.#name;
@@ -14,7 +14,10 @@ export class Sound {
         return this.#description;
     }
     getSoundData() {
-        return this.#soundData;
+        return this.#soundData.data;
+    }
+    getSoundVolume() {
+        return this.#soundData.volume;
     }
 
 
