@@ -36,7 +36,7 @@ function handleDragStart(event) {
 
 
         event.preventDefault();
-        event.target.classList.remove("playinglowest", "playinglow", "playingmedium", "playinghigh", "playinghighest");
+        event.target.classList.remove("playinglowest", "playinglow", "playingmid", "playinghigh", "playinghighest");
         dragSrcEl = event.target;
         dragSrcAudioVolume = event.target.querySelector("audio").volume;
         event.target.style.opacity = 0.5;
@@ -90,14 +90,14 @@ function handleDrop(event) {
             e.target.parentNode.classList.add("playing" + volumeIntesityAnimation(e.target.volume));
         });
         audio1.addEventListener("pause", (e) => {
-            e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmedium", "playinghigh", "playinghighest");
+            e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmid", "playinghigh", "playinghighest");
         });
         const audio2 = dragSrcEl.querySelector("audio");
         audio2.addEventListener("play", (e) => {
             e.target.parentNode.classList.add("playing" + volumeIntesityAnimation(e.target.volume));
         });
         audio2.addEventListener("pause", (e) => {
-            e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmedium", "playinghigh", "playinghighest");
+            e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmid", "playinghigh", "playinghighest");
         });
 
     }
@@ -161,10 +161,11 @@ function createSoundHtmlElement(sound) {
     document.getElementById("sound-container").appendChild(soundElement);
     addEventListenerToSoundElement(soundElement);
     audio.addEventListener("play", (e) => {
+        console.log(e.target.volume);
         e.target.parentNode.classList.add("playing" + volumeIntesityAnimation(e.target.volume));
     });
     audio.addEventListener("pause", (e) => {
-        e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmedium", "playinghigh", "playinghighest");
+        e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmid", "playinghigh", "playinghighest");
     });
 }
 function addEventListenerToSoundElement(element) {
@@ -273,10 +274,13 @@ function volumeIntesityAnimation(volume) {
         return "low";
     }
     if (volume < 0.5 && volume >= 0.25) {
-        return "medium";
+        return "mid";
     }
-    if (volume < 0.75 && volume >= 0.5) {
+    if (volume != 1 && volume >= 0.5) {
         return "high";
+    }
+    if(volume ==undefined){
+        return "mid";
     }
 }
 document.addEventListener("DOMContentLoaded", starterFunction);
