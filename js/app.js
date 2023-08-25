@@ -196,6 +196,10 @@ function saveSounds() {
     //Download the soundContainer as a json file
     const soundContainer = document.getElementById("sound-container");
     const sounds = soundContainer.children;
+    if (sounds.length == 0) {
+        alert("No sounds to save");
+        return;
+    }
     const soundData = [];
     for (let i = 0; i < sounds.length; i++) {
         const sound = sounds[i];
