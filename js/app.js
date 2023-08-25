@@ -96,12 +96,24 @@ async function audioToBase64(audioFile) {
     });
 }
 async function handleFiles(files) {
-    //Check if file is audio
-    if (!files[0].type.startsWith("audio")) {
+    //Check if file is audio or json
+    if (!files[0].type.startsWith("audio") && files[0].type != "application/json") {
+
         alert("File is not audio");
         files = null;
         return;
     }
+    if (files[0].type == "application/json") {
+        //Load the json file and add the sounds to the soundContainer
+        const reader = new FileReader();
+        reader.onload = function () {
+            const data = JSON.parse(reader.result);
+            load(data);
+        }
+        reader.readAsText(files[0]);
+        return;
+    }
+
     //Turn file into base64
     let audio = await audioToBase64(files[0]);
     //Create sound object
@@ -161,19 +173,24 @@ function loadSounds() {
         const reader = new FileReader();
         reader.onload = function () {
             const data = JSON.parse(reader.result);
-            document.getElementById("soundboard-name").innerText = data.name;
-            for (let i = 0; i < data.data.length; i++) {
-                const soundData = data.data[i];
-                //Create sound object
-                const sound = new Sound(soundData.name, soundData.desc || "", {data:soundData.src,volume:soundData.volume}, );
-                //Create html element
-                createSoundHtmlElement(sound);
-            }
+            load(data);
         }
         reader.readAsText(file);
     }
     fileInput.click();
 
+}
+function load(data){
+    //Clear the sound container
+    document.getElementById("sound-container").innerHTML = "";
+    document.getElementById("soundboard-name").innerText = data.name;
+    for (let i = 0; i < data.data.length; i++) {
+        const soundData = data.data[i];
+        //Create sound object
+        const sound = new Sound(soundData.name, soundData.desc || "", {data:soundData.src,volume:soundData.volume}, );
+        //Create html element
+        createSoundHtmlElement(sound);
+    }
 }
 function saveSounds() {
     //Download the soundContainer as a json file
