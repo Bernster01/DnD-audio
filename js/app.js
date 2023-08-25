@@ -11,6 +11,7 @@ function starterFunction() {
     sounds.forEach(sound => {
         addEventListenerToSoundElement(sound);
     });
+    console.log(volumeIntesityAnimation(0.5));
     //File drop
     let fileDropZone = document.querySelector(".file-drop-zone");
     ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
@@ -24,8 +25,7 @@ function starterFunction() {
         let files = dt.files;
         handleFiles(files);
     });
-    //No drag
-    fixNoDrag()
+
     //Load and Save
     document.getElementById("load-button").addEventListener("click", loadSounds);
     document.getElementById("save-button").addEventListener("click", saveSounds);
@@ -36,7 +36,7 @@ function handleDragStart(event) {
 
 
         event.preventDefault();
-        console.log(event.target.innerHTML);
+        event.target.classList.remove("playinglowest", "playinglow", "playingmedium", "playinghigh", "playinghighest");
         dragSrcEl = event.target;
         dragSrcAudioVolume = event.target.querySelector("audio").volume;
         event.target.style.opacity = 0.5;
@@ -83,7 +83,23 @@ function handleDrop(event) {
         document.querySelectorAll(".drop-target-animate").forEach(element => {
             element.classList.remove("drop-target-animate");
         });
-        fixNoDrag();
+        fixNoDrag(event.target);
+        fixNoDrag(dragSrcEl);
+        const audio1 = event.target.querySelector("audio");
+        audio1.addEventListener("play", (e) => {
+            e.target.parentNode.classList.add("playing" + volumeIntesityAnimation(e.target.volume));
+        });
+        audio1.addEventListener("pause", (e) => {
+            e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmedium", "playinghigh", "playinghighest");
+        });
+        const audio2 = dragSrcEl.querySelector("audio");
+        audio2.addEventListener("play", (e) => {
+            e.target.parentNode.classList.add("playing" + volumeIntesityAnimation(e.target.volume));
+        });
+        audio2.addEventListener("pause", (e) => {
+            e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmedium", "playinghigh", "playinghighest");
+        });
+
     }
 }
 
@@ -117,7 +133,7 @@ async function handleFiles(files) {
     //Turn file into base64
     let audio = await audioToBase64(files[0]);
     //Create sound object
-    const sound = new Sound(files[0].name, files[0].name, {data:audio});
+    const sound = new Sound(files[0].name, files[0].name, { data: audio });
     //Create html element
     createSoundHtmlElement(sound);
 
@@ -138,11 +154,18 @@ function createSoundHtmlElement(sound) {
     soundElement.innerHTML = soundTemplateHtml;
     soundElement.querySelector("h2").innerHTML = sound.getName();
     soundElement.querySelector("p").innerHTML = sound.getDescription();
-    let audio =soundElement.querySelector("audio");
+    let audio = soundElement.querySelector("audio");
     audio.src = sound.getSoundData();
     audio.volume = sound.getSoundVolume();
+
     document.getElementById("sound-container").appendChild(soundElement);
     addEventListenerToSoundElement(soundElement);
+    audio.addEventListener("play", (e) => {
+        e.target.parentNode.classList.add("playing" + volumeIntesityAnimation(e.target.volume));
+    });
+    audio.addEventListener("pause", (e) => {
+        e.target.parentNode.classList.remove("playinglowest", "playinglow", "playingmedium", "playinghigh", "playinghighest");
+    });
 }
 function addEventListenerToSoundElement(element) {
     element.addEventListener("dragstart", handleDragStart);
@@ -151,16 +174,18 @@ function addEventListenerToSoundElement(element) {
     element.addEventListener("dragleave", handleDragLeave);
     element.addEventListener("dragover", handleDragOver);
     element.addEventListener("drop", handleDrop);
-    fixNoDrag()
-    
+    fixNoDrag(element)
+
 }
-function fixNoDrag(){
-    document.querySelectorAll(".no-drag").forEach(element => {
-        element.addEventListener("dragstart", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-        });
-        element.setAttribute("draggable", "true");
+function fixNoDrag(el) {
+    el.querySelectorAll(".no-drag").forEach(element => {
+        if (element.classList.contains("no-drag")) {
+            element.addEventListener("dragstart", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+            element.setAttribute("draggable", "true");
+        }
     });
 }
 function loadSounds() {
@@ -180,14 +205,14 @@ function loadSounds() {
     fileInput.click();
 
 }
-function load(data){
+function load(data) {
     //Clear the sound container
     document.getElementById("sound-container").innerHTML = "";
     document.getElementById("soundboard-name").innerText = data.name;
     for (let i = 0; i < data.data.length; i++) {
         const soundData = data.data[i];
         //Create sound object
-        const sound = new Sound(soundData.name, soundData.desc || "", {data:soundData.src,volume:soundData.volume}, );
+        const sound = new Sound(soundData.name, soundData.desc || "", { data: soundData.src, volume: soundData.volume },);
         //Create html element
         createSoundHtmlElement(sound);
     }
@@ -216,13 +241,13 @@ function saveSounds() {
     }
     const name = document.getElementById("soundboard-name").innerText;
     console.log(name);
-    const data = JSON.stringify({name:name,data:soundData});
+    const data = JSON.stringify({ name: name, data: soundData });
     const blob = new Blob([data], { type: 'application/json' });
     console.log(blob);
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = "Soundboard_"+name + ".json";
+    link.download = "Soundboard_" + name + ".json";
     link.textContent = 'Download JSON';
 
     document.body.appendChild(link);
@@ -237,5 +262,21 @@ function saveSounds() {
     link.remove();
 
 }
-
+function volumeIntesityAnimation(volume) {
+    if (volume == 0) {
+        return "lowest";
+    }
+    if (volume == 1) {
+        return "highest";
+    }
+    if (volume < 0.25) {
+        return "low";
+    }
+    if (volume < 0.5 && volume >= 0.25) {
+        return "medium";
+    }
+    if (volume < 0.75 && volume >= 0.5) {
+        return "high";
+    }
+}
 document.addEventListener("DOMContentLoaded", starterFunction);
