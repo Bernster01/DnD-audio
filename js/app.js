@@ -161,10 +161,9 @@ function loadSounds() {
         const reader = new FileReader();
         reader.onload = function () {
             const data = JSON.parse(reader.result);
-            const soundContainer = document.getElementById("sound-container");
-            for (let i = 0; i < data.length; i++) {
-                const soundData = data[i];
-                console.log(soundData);
+            document.getElementById("soundboard-name").innerText = data.name;
+            for (let i = 0; i < data.data.length; i++) {
+                const soundData = data.data[i];
                 //Create sound object
                 const sound = new Sound(soundData.name, soundData.desc || "", {data:soundData.src,volume:soundData.volume}, );
                 //Create html element
@@ -192,14 +191,15 @@ function saveSounds() {
             volume: soundVolume
         });
     }
-    console.log(soundData);
-    const data = JSON.stringify(soundData);
+    const name = document.getElementById("soundboard-name").innerText;
+    console.log(name);
+    const data = JSON.stringify({name:name,data:soundData});
     const blob = new Blob([data], { type: 'application/json' });
     console.log(blob);
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'soundboard.json';
+    link.download = "Soundboard_"+name + ".json";
     link.textContent = 'Download JSON';
 
     document.body.appendChild(link);
