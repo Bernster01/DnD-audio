@@ -3,6 +3,7 @@
     <head>
         <link rel="stylesheet" href="css/style.css">
         <script src="js/app.js" type="module"></script>
+        <script src="https://kit.fontawesome.com/7060ae4657.js" crossorigin="anonymous"></script>
     </head>
     <body>
         <main>
@@ -14,22 +15,19 @@
                     <audio class="no-drag" controls>
                         <source src="" type="audio/mpeg">
                     </audio>
-                </div>
-                <div class="sound" id="sound-2" draggable="true">
-                    <h2 class="no-drag">Music - Fight</h2>
-                    <p class="no-drag"></p>
-                    <audio class="no-drag" controls>
-                        <source src="" type="audio/mpeg">
-                    </audio>
-                </div>
-                <div class="sound" id="sound-3" draggable="true">
-                    <h2 class="no-drag">Music - Tavern</h2>
-                    <p class="no-drag"></p>
-                    <audio class="no-drag" controls>
-                        <source src="" type="audio/mpeg">
-                    </audio>
+                    <div class="delete-sound" onclick="deleteElement(this.parentNode)">
+                        <i class="fa-solid fa-trash"></i>
+                    </div>
                 </div>
             </div>
         </main>
     </body>
+    <script>
+        async function deleteElement(element) {
+            const result = await confirm("You are about to delete this sound. Are you sure?");
+            if(result) {
+                element.remove();
+            }
+        }
+    </script>
 </html>
