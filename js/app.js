@@ -3,9 +3,39 @@ const soundTemplateHtml = ``;
 let dragSrcEl = null;
 //DataTransfer not working 
 let dataTransfer = null;
+
+function starterFunction() {
+    //Add event listeners
+    let sounds = document.querySelectorAll(".sound")
+    sounds.forEach(sound => {
+        addEventListenerToSoundElement(sound);
+    });
+    //File drop
+    let fileDropZone = document.querySelector(".file-drop-zone");
+    ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+        fileDropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+    });
+    fileDropZone.addEventListener("drop", (e) => {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        handleFiles(files);
+    });
+    //No drag
+    document.querySelectorAll(".no-drag").forEach(element => {
+        element.addEventListener("dragstart", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        element.setAttribute("draggable", "true");
+    });
+}
 function handleDragStart(event) {
     setTimeout(() => {
-        //If target is a div
+
+
 
         event.preventDefault();
         console.log(event.target.innerHTML);
@@ -56,34 +86,14 @@ function handleDrop(event) {
     }
 }
 
-function starterFunction() {
-    //Add event listeners
-    let sounds = document.querySelectorAll(".sound")
-    sounds.forEach(sound => {
-        addEventListenerToSoundElement(sound);
-    });
-    //File drop
-    let fileDropZone = document.querySelector(".file-drop-zone");
-    ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
-        fileDropZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, false);
-    });
-    fileDropZone.addEventListener("drop", (e) => {
-        let dt = e.dataTransfer;
-        let files = dt.files;
-        handleFiles(files);
-    });
-}
 async function audioToBase64(audioFile) {
     return new Promise((resolve, reject) => {
-      let reader = new FileReader();
-      reader.onerror = reject;
-      reader.onload = (e) => resolve(e.target.result);
-      reader.readAsDataURL(audioFile);
+        let reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(audioFile);
     });
-  }
+}
 async function handleFiles(files) {
     //Check if file is audio
     if (!files[0].type.startsWith("audio")) {
@@ -102,7 +112,7 @@ async function handleFiles(files) {
 
 }
 function createSoundHtmlElement(sound) {
-    console.log("2 ",sound);
+    console.log("2 ", sound);
     const soundTemplateHtml = `
 <h2 class="no-drag">Name</h2>
 <p class="no-drag"></p>
@@ -116,15 +126,23 @@ function createSoundHtmlElement(sound) {
     soundElement.querySelector("h2").innerHTML = sound.getName();
     soundElement.querySelector("p").innerHTML = sound.getDescription();
     soundElement.querySelector("audio").src = sound.getSoundData();
-    addEventListenerToSoundElement(soundElement);
     document.getElementById("sound-container").appendChild(soundElement);
+    addEventListenerToSoundElement(soundElement);
 }
-function addEventListenerToSoundElement(element){
+function addEventListenerToSoundElement(element) {
     element.addEventListener("dragstart", handleDragStart);
     element.addEventListener("dragend", handleDragEnd);
     element.addEventListener("dragenter", handleDragEnter);
     element.addEventListener("dragleave", handleDragLeave);
     element.addEventListener("dragover", handleDragOver);
     element.addEventListener("drop", handleDrop);
+    document.querySelectorAll(".no-drag").forEach(element => {
+        element.addEventListener("dragstart", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        element.setAttribute("draggable", "true");
+    });
+    
 }
 document.addEventListener("DOMContentLoaded", starterFunction);

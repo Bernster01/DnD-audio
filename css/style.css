@@ -49,7 +49,7 @@ html{
 
 }
 .no-drag{
-    pointer-events: none;
+    cursor: pointer;
 }
 /* Animations */
 @keyframes drop-target-animation {
