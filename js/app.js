@@ -142,7 +142,7 @@ function createSoundHtmlElement(sound) {
     console.log("2 ", sound);
     const soundTemplateHtml = ` <h2 class="no-drag" contenteditable="true">Music - Chase</h2>
     <p class="no-drag" contenteditable="true"></p>
-    <audio class="no-drag" controls>
+    <audio class="no-drag" controls loop>
         <source src="" type="audio/mpeg">
     </audio>
     <div class="delete-sound" onclick="deleteElement(this.parentNode)">
